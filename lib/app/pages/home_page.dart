@@ -27,7 +27,7 @@ class HomePage extends StatelessWidget {
                     height: 56,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, '/timer');
+                        Navigator.pushNamed(context, '/timer', arguments: TimerType.focus);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppConfig.buttonColor,
@@ -53,7 +53,10 @@ class HomePage extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () async {
 
-                        final result =  await Navigator.pushNamed(context, '/timer');
+                        final result =  await Navigator.pushNamed(
+                          context, '/timer',
+                          arguments: TimerType.shortBreak
+                          );
 
                         if(result != null){
                           showDialog(context: context, 
@@ -86,7 +89,10 @@ class HomePage extends StatelessWidget {
                     height: 56,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, '/timer');
+                        Navigator.pushNamed(
+                          context, '/timer', 
+                          arguments: TimerType.longBreak
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppConfig.buttonColor,
