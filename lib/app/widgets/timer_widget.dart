@@ -14,32 +14,42 @@ class TimerWidget extends StatefulWidget {
 }
 
 class _TimerWidgetState extends State<TimerWidget> {
-  
   bool isPlaying = false;
 
   Timer? timer;
   Duration duration = Duration.zero;
 
   void startTimer() {
+  timer = Timer.periodic(const Duration(seconds: 1), (timer) {
     setState(() {
-      duration = Duration.zero;
+      if (duration.inSeconds < widget.initialMinutes * 60) {
+        duration += const Duration(seconds: 1);
+      } else {
+        isPlaying = false;
+        timer.cancel();
+      }
     });
+  });
+}
 
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      setState(() {
-        if (duration.inMinutes < widget.initialMinutes) {
-          duration += Duration(seconds: 1);
-        } else {
-          isPlaying = false;
-          timer.cancel();
-        }
-      });
-    });
-  }
+void resetTimer() {
+  timer?.cancel();
+  setState(() {
+    duration = Duration.zero;
+    isPlaying = false;
+  });
+}
+
 
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    timer?.cancel();
   }
 
   @override
@@ -74,13 +84,18 @@ class _TimerWidgetState extends State<TimerWidget> {
             height: 56,
             child: ElevatedButton(
               onPressed: () {
-                startTimer();
                 setState(() {
                   isPlaying = !isPlaying;
                 });
+
+                if (isPlaying) {
+                  startTimer();
+                } else {
+                  timer?.cancel();
+                }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: isPlaying ? Colors.red : AppConfig.buttonColor ,
+                backgroundColor: isPlaying ? Colors.red : AppConfig.buttonColor,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 30,
@@ -93,7 +108,10 @@ class _TimerWidgetState extends State<TimerWidget> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon( isPlaying ? Icons.stop : Icons.play_arrow, color: AppConfig.backgroundColor),
+                  Icon(
+                    isPlaying ? Icons.stop : Icons.play_arrow,
+                    color: AppConfig.backgroundColor,
+                  ),
                   const SizedBox(width: 10),
                   Text(
                     isPlaying ? "Pausar" : "Iniciar",
@@ -101,6 +119,37 @@ class _TimerWidgetState extends State<TimerWidget> {
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: AppConfig.backgroundColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: OutlinedButton(
+              onPressed: resetTimer,
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: Colors.white),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(Icons.refresh, color: Colors.white),
+                  SizedBox(width: 10),
+                  Text(
+                    "Resetar",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 ],
