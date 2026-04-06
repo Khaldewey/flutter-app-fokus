@@ -17,6 +17,7 @@ class TimerWidget extends StatefulWidget {
 
 class _TimerWidgetState extends State<TimerWidget> {
   final timerViewModel = TimerViewModel();
+  final isPausedNotifier = ValueNotifier<bool>(false);
 
   @override
   void initState() {
@@ -72,7 +73,8 @@ class _TimerWidgetState extends State<TimerWidget> {
                 child: ElevatedButton(
                   onPressed: () {
                     if (!timerViewModel.isPlaying) {
-                      timerViewModel.startTimer(widget.initialMinutes);
+                      timerViewModel.startTimer(widget.initialMinutes, isPausedNotifier);
+                      isPausedNotifier.value = false;
                     } else {
                       timerViewModel.stopTimer();
                     }
@@ -101,7 +103,7 @@ class _TimerWidgetState extends State<TimerWidget> {
                       ),
                       const SizedBox(width: 10),
                       Text(
-                        timerViewModel.isPlaying ? "Pausar" : "Iniciar",
+                        timerViewModel.isPlaying ? "Parar" : "Iniciar",
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
